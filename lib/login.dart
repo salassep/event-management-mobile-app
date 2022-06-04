@@ -1,5 +1,7 @@
+import 'package:event_management_app/daftar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
 
 class Signin extends StatefulWidget {
   const Signin({Key? key}) : super(key: key);
@@ -15,7 +17,6 @@ class Signin extends StatefulWidget {
 
   @override
  Widget build(BuildContext context) {
-    final Function() onTap;
     return Scaffold(
       body: SafeArea(
           child: Stack(
@@ -46,7 +47,14 @@ class Signin extends StatefulWidget {
                   style: TextStyle(
                     color: Colors.white, fontSize: 28, fontWeight: FontWeight.w700
                   ),
-                )
+                ),
+                // IconButton(
+                //   icon: Icon(Icons.person_add_alt_1_rounded),
+                //   tooltip: 'Regist Icon',
+                //   onPressed: (){
+                //     Navigator.push(context, MaterialPageRoute(builder:(context) => daftar()),);
+                //   },
+                // ),
               ],
             ),
           ),
@@ -153,7 +161,9 @@ class Signin extends StatefulWidget {
                           TextSpan(
                               text: "Sign Up",
                               style: const TextStyle(color: Colors.blue, fontSize: 16),
-                              recognizer: TapGestureRecognizer()..onTap 
+                              recognizer: TapGestureRecognizer()..onTap = (){
+                                Navigator.push(context, MaterialPageRoute(builder:(context) => daftar()),);
+                              } 
                           ),
                         ]
                       ),

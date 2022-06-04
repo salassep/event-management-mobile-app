@@ -1,6 +1,7 @@
 
+import 'package:event_management_app/splashscreen.dart';
 import 'package:flutter/material.dart';
-import 'package:event_management_app/login.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      home: Signin(),
+      home: SplashScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
