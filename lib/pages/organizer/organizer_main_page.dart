@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:event_management_app/pages/organizer/add_event.dart';
 import 'package:event_management_app/util/get_date.dart';
 import 'package:event_management_app/pages/detail_page.dart';
 import 'package:event_management_app/widgets/drawer.dart';
@@ -8,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 
-class Home extends StatelessWidget {
-  const Home({Key? key}) : super(key: key);
+class OrganizerHome extends StatelessWidget {
+  const OrganizerHome({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -53,13 +54,13 @@ class Home extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      drawer: AppDrawer(),
+      drawer: OrganizerAppDrawer(),
       body: SafeArea(
         child: ListView(
           padding: EdgeInsets.symmetric(horizontal: 18),
           children: [
             Text(
-              "Temukan Eventmu !",
+              "Buat Eventmu !",
               style: TextStyle(
                 fontFamily: "Quicksand",
                 fontWeight: FontWeight.w700,
@@ -107,112 +108,8 @@ class Home extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            Container(
-              height: 40,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: <Widget>[
-                  ElevatedButton(
-                    onPressed: () {}, 
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.explore_outlined,
-                          color: Colors.black,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          "Semua",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: "Quicksand",
-                            fontWeight: FontWeight.w600
-                          ),
-                        ),
-                      ],
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      primary: Color.fromARGB(255, 226, 225, 225),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0)
-                      )
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {}, 
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.edit_note_outlined,
-                          color: Colors.black,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          "Desain",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: "Quicksand",
-                            fontWeight: FontWeight.w600
-                          ),
-                        ),
-                      ],
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      primary: Color.fromARGB(255, 226, 225, 225),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0)
-                      )
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {}, 
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.smartphone_outlined,
-                          color: Colors.black,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          "Technology",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: "Quicksand",
-                            fontWeight: FontWeight.w600
-                          ),
-                        ),
-                      ],
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      primary: Color.fromARGB(255, 226, 225, 225),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0)
-                      )
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
             GestureDetector(
-              onTap: (() => Get.to(DetailPage())),
+              onTap: () => Get.to(() => DetailPage()),
               child: Container(
                 color: Color.fromARGB(255, 226, 225, 225),
                 height: 200,
@@ -241,6 +138,30 @@ class Home extends StatelessWidget {
             )
           ],
         )
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Color.fromARGB(255, 54, 60, 79),
+        label: Row(
+          children: [
+            Icon(
+              Icons.add,
+              size: 20,
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              "Buat Event",
+              style: TextStyle(
+                letterSpacing: 0,
+                fontFamily: "Quicksand",
+                fontSize: 14,
+                fontWeight: FontWeight.w600
+              ),
+            )
+          ],
+        ),
+        onPressed: () => Get.to(() => AddEvent()),
       ),
     );
   }

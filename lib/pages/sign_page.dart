@@ -1,6 +1,7 @@
-import 'package:event_management_app/login.dart';
+import 'package:event_management_app/pages/login_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 // import 'package:flutter/src/foundation/key.dart';
 // import 'package:flutter/src/widgets/framework.dart';
 
@@ -17,7 +18,6 @@ class _daftarState extends State<daftar> {
   SingingCharacter? _character = SingingCharacter.peserta;
   @override
   Widget build(BuildContext context) {
-    final Function() onTap;
     return Scaffold(
       body: SafeArea(
           child: Stack(
@@ -25,7 +25,7 @@ class _daftarState extends State<daftar> {
           Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            color: Color.fromARGB(255, 235, 19, 145),
+            color: Color.fromARGB(255, 54, 60, 79),
           ),
           Container(
             margin: const EdgeInsets.only(top: 16, left: 16),
@@ -34,27 +34,30 @@ class _daftarState extends State<daftar> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 InkWell(
+                  onTap: () => Get.back(),
                   child: const Icon(
                     Icons.arrow_back_ios_new_rounded,
                     color: Colors.white,
-                    size: 24,
+                    size: 22,
                   ),
                 ),
                 const SizedBox(
-                  width: 16,
+                  width: 10,
                 ),
                 Text(
                   "Registrasi",
                   style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700),
-                )
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontFamily: "Quicksand",
+                    fontWeight: FontWeight.w600
+                  ),
+                ),
               ],
             ),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.08,
+            top: MediaQuery.of(context).size.height * 0.09,
             child: Container(
               height: MediaQuery.of(context).size.height * 0.9,
               width: MediaQuery.of(context).size.width,
@@ -67,7 +70,7 @@ class _daftarState extends State<daftar> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(
-                    height: 50,
+                    height: 40,
                   ),
                   Row(
                     children: [
@@ -82,7 +85,7 @@ class _daftarState extends State<daftar> {
                         child: Container(
                           margin: const EdgeInsets.only(left: 10, right: 20),
                           decoration: BoxDecoration(
-                            color: Color.fromARGB(159, 245, 188, 188),
+                            color: Color.fromARGB(50, 54, 60, 79),
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: Padding(
@@ -98,7 +101,8 @@ class _daftarState extends State<daftar> {
                                 hintStyle: TextStyle(
                                     color: Colors.black,
                                     fontSize: 14,
-                                    fontWeight: FontWeight.w500),
+                                    fontFamily: "Quicksand",
+                                  ),
                                 border: InputBorder.none,
                                 // suffixIcon: SizedBox(),
                               ),
@@ -124,7 +128,7 @@ class _daftarState extends State<daftar> {
                         child: Container(
                           margin: const EdgeInsets.only(left: 10, right: 20),
                           decoration: BoxDecoration(
-                            color: Color.fromARGB(159, 245, 188, 188),
+                            color: Color.fromARGB(50, 54, 60, 79),
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: Padding(
@@ -140,7 +144,8 @@ class _daftarState extends State<daftar> {
                                 hintStyle: TextStyle(
                                     color: Colors.black,
                                     fontSize: 14,
-                                    fontWeight: FontWeight.w500),
+                                    fontFamily: "Quicksand",
+                                  ),
                                 border: InputBorder.none,
                                 suffixIcon: SizedBox(),
                               ),
@@ -166,7 +171,7 @@ class _daftarState extends State<daftar> {
                         child: Container(
                           margin: const EdgeInsets.only(left: 10, right: 20),
                           decoration: BoxDecoration(
-                            color: Color.fromARGB(159, 245, 188, 188),
+                            color: Color.fromARGB(50, 54, 60, 79),
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: Padding(
@@ -182,7 +187,8 @@ class _daftarState extends State<daftar> {
                                 hintStyle: TextStyle(
                                     color: Colors.black,
                                     fontSize: 14,
-                                    fontWeight: FontWeight.w500),
+                                    fontFamily: "Quicksand",
+                                  ),
                                 border: InputBorder.none,
                                 suffixIcon: SizedBox(),
                               ),
@@ -208,7 +214,7 @@ class _daftarState extends State<daftar> {
                         child: Container(
                           margin: const EdgeInsets.only(left: 10, right: 20),
                           decoration: BoxDecoration(
-                            color: Color.fromARGB(159, 245, 188, 188),
+                            color: Color.fromARGB(50, 54, 60, 79),
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: Padding(
@@ -227,7 +233,8 @@ class _daftarState extends State<daftar> {
                                 hintStyle: TextStyle(
                                     color: Colors.black,
                                     fontSize: 14,
-                                    fontWeight: FontWeight.w500),
+                                    fontFamily: "Quicksand",
+                                  ),
                                 border: InputBorder.none,
                               ),
                             ),
@@ -242,6 +249,7 @@ class _daftarState extends State<daftar> {
                   Row(
                     children: [
                       Container(
+                        padding: EdgeInsets.only(right: 10),
                         margin: EdgeInsets.only(left: 20),
                         child: Icon(
                           Icons.people_alt,
@@ -251,33 +259,65 @@ class _daftarState extends State<daftar> {
                       Expanded(
                         child: Text(
                           "Hak Akses",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontFamily: "Quicksand",
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  ListTile(
-                    title: const Text('Peserta'),
-                    leading: Radio<SingingCharacter>(
-                      value: SingingCharacter.peserta,
-                      groupValue: _character,
-                      onChanged: (SingingCharacter? value) {
-                        setState(() {
-                          _character = value;
-                        });
-                      },
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    height: 40,
+                    child: ListTile(
+                      dense: true,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 0),
+                      visualDensity: VisualDensity(horizontal: -4, vertical: -2),
+                      title: const Text(
+                        'Peserta',
+                        style: TextStyle(
+                          fontFamily: "Quicksand",
+                          fontSize: 15
+                        ),
+                      ),
+                      leading: Radio<SingingCharacter>(
+                        fillColor: MaterialStateColor.resolveWith((states) => Color.fromARGB(255, 54, 60, 79)),
+                        value: SingingCharacter.peserta,
+                        groupValue: _character,
+                        onChanged: (SingingCharacter? value) {
+                          setState(() {
+                            _character = value;
+                          });
+                        },
+                      ),
                     ),
                   ),
-                  ListTile(
-                    title: const Text('Organizer'),
-                    leading: Radio<SingingCharacter>(
-                      value: SingingCharacter.organizer,
-                      groupValue: _character,
-                      onChanged: (SingingCharacter? value) {
-                        setState(() {
-                          _character = value;
-                        });
-                      },
+                  Container(
+                    height: 40,
+                    child: ListTile(
+                      dense: true,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 0),
+                      visualDensity: VisualDensity(horizontal: -4, vertical: -2),
+                      title: const Text(
+                        'Organizer',
+                        style: TextStyle(
+                          fontFamily: "Quicksand",
+                          fontSize: 15
+                        ),
+                      ),
+                      leading: Radio<SingingCharacter>(
+                        fillColor: MaterialStateColor.resolveWith((states) => Color.fromARGB(255, 54, 60, 79)),
+                        value: SingingCharacter.organizer,
+                        groupValue: _character,
+                        onChanged: (SingingCharacter? value) {
+                          setState(() {
+                            _character = value;
+                          });
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -285,14 +325,20 @@ class _daftarState extends State<daftar> {
                   ),
                   Center(
                     child: Container(
-                      width: 350,
+                      width: 150,
                       height: 40,
                       child: ElevatedButton(
-                        onPressed: () {},
-                        child: Text('Daftar'),
+                        onPressed: () => Get.to(Signin()),
+                        child: Text(
+                          'Daftar',
+                          style: TextStyle(
+                            fontFamily: "Quicksand",
+                            fontWeight: FontWeight.w600
+                          ),
+                        ),
                         style: ElevatedButton.styleFrom(
                           shape: StadiumBorder(),
-                          primary: Color.fromARGB(255, 235, 19, 145),
+                          primary: Color.fromARGB(255, 54, 60, 79),
                         ),
                       ),
                     ),
@@ -302,14 +348,21 @@ class _daftarState extends State<daftar> {
                       margin: EdgeInsets.only(top: 20),
                       child: Text.rich(
                         TextSpan(
-                            text: "Sudah Punya Akun ",
+                            text: "Sudah punya akun ? ",
                             style: const TextStyle(
-                                color: Colors.black87, fontSize: 16),
+                                color: Colors.black87, 
+                                fontSize: 15,
+                                fontFamily: "Quicksand",
+                              ),
+                                
                             children: <InlineSpan>[
                               TextSpan(
-                                  text: "Masuk",
+                                  text: "Log in",
                                   style: const TextStyle(
-                                      color: Colors.blue, fontSize: 16),
+                                    color: Colors.blue, 
+                                    fontSize: 15,
+                                    fontFamily: "Quicksand",
+                                  ),
                                   recognizer: TapGestureRecognizer()..onTap = (){
                                    Navigator.push(context, MaterialPageRoute(builder:(context) => Signin()),);
                                   } 

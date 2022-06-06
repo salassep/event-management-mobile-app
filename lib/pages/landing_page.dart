@@ -1,5 +1,6 @@
-import 'package:event_management_app/login.dart';
+import 'package:event_management_app/pages/login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({Key? key}) : super(key: key);
@@ -7,15 +8,16 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(159, 252, 157, 157),
+      backgroundColor: Colors.white,
       body: ListView(
         children: [
           Container(
             // width: MediaQuery.of(context).size.width,
             // height: MediaQuery.of(context).size.height,
             height: 400,
+            padding: EdgeInsets.all(40),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Color.fromARGB(200, 54, 60, 79),
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(100),
                 bottomRight: Radius.circular(100),
@@ -24,17 +26,17 @@ class LandingPage extends StatelessWidget {
             child: Container(
               child: Image.asset(
                 'assets/images/logo.png',
-                height: 250,
-                width: 100,
               ),
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 50, left: 15),
+            margin: EdgeInsets.only(top: 20, left: 15),
             child: Text(
-              'Organize your own event',
+              'Organize your own event !',
               style: TextStyle(
+                fontFamily: "Quicksand",
                 fontSize: 23,
+                fontWeight: FontWeight.w700
               ),
             ),
           ),
@@ -44,32 +46,32 @@ class LandingPage extends StatelessWidget {
               'Simpan dan organisir segala event anda\nTidak ada lagi catatan event yang berhambur,\nSemua bisa dilakukan di tangan anda melalui aplikasi ini, sekarang!',
               style: TextStyle(
                 fontSize: 13,
+                fontFamily: "Quicksand",
+                fontWeight: FontWeight.w500
               ),
             ),
           ),
-          Container(
-          // // padding: const EdgeInsets.only(top: 50, left: 160, right: 160),
-            margin: EdgeInsets.only(top:55),
-            child :ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const Signin(),
+          SizedBox(
+            height: 20,
+          ),
+          Center(
+            child: Container(
+              width: 150,
+              height: 40,
+              child: ElevatedButton(
+                onPressed: () => Get.to(Signin()),
+                child: Text(
+                  'Mulai',
+                  style: TextStyle(
+                    fontFamily: "Quicksand",
+                    fontWeight: FontWeight.w600
                   ),
-                );
-              },
-            child: Text('Coba Sekarang'),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.white,
-                onPrimary: Colors.black,
-                shadowColor: Colors.black,
-                minimumSize: Size(500, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                ),
+                style: ElevatedButton.styleFrom(
+                  shape: StadiumBorder(),
+                  primary: Color.fromARGB(255, 54, 60, 79),
                 ),
               ),
-              
             ),
           ),
         ],

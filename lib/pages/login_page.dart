@@ -1,6 +1,9 @@
-import 'package:event_management_app/daftar.dart';
+import 'package:event_management_app/pages/main_page.dart';
+import 'package:event_management_app/pages/organizer/organizer_main_page.dart';
+import 'package:event_management_app/pages/sign_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 
 class Signin extends StatefulWidget {
@@ -24,7 +27,7 @@ class Signin extends StatefulWidget {
           Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            color: Color.fromARGB(255, 235, 19, 145),
+            color: Color.fromARGB(255, 54, 60, 79),
           ),
           Container(
             margin: const EdgeInsets.only(top: 16, left: 16),
@@ -33,19 +36,23 @@ class Signin extends StatefulWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 InkWell(
+                  onTap: () => Get.back(),
                   child: const Icon(
                     Icons.arrow_back_ios_new_rounded,
                     color: Colors.white,
-                    size: 24,
+                    size: 22,
                   ),
                 ),
                 const SizedBox(
-                  width: 16,
+                  width: 10,
                 ),
                 Text(
                   "Log In",
                   style: TextStyle(
-                    color: Colors.white, fontSize: 28, fontWeight: FontWeight.w700
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontFamily: "Quicksand",
+                    fontWeight: FontWeight.w600
                   ),
                 ),
                 // IconButton(
@@ -59,7 +66,7 @@ class Signin extends StatefulWidget {
             ),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.08,
+            top: MediaQuery.of(context).size.height * 0.1,
             child: Container(
               height: MediaQuery.of(context).size.height * 0.9,
               width: MediaQuery.of(context).size.width,
@@ -87,7 +94,7 @@ class Signin extends StatefulWidget {
                   Container(
                     margin: const EdgeInsets.only(left: 20, right: 20),
                     decoration: BoxDecoration(
-                      color: Color.fromARGB(159, 245, 188, 188),
+                      color: Color.fromARGB(50, 54, 60, 79),
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: Padding(
@@ -99,7 +106,11 @@ class Signin extends StatefulWidget {
                         obscureText: false,
                         decoration: InputDecoration(
                             hintText: "Email",
-                            hintStyle: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                            hintStyle: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontFamily: "Quicksand",
+                              fontWeight: FontWeight.w300),
                             border: InputBorder.none,
                             suffixIcon: const SizedBox(),
                         ),
@@ -112,7 +123,7 @@ class Signin extends StatefulWidget {
                   Container(
                     margin: const EdgeInsets.only(left: 20, right: 20),
                     decoration: BoxDecoration(
-                      color: Color.fromARGB(159, 245, 188, 188),
+                      color: Color.fromARGB(50, 54, 60, 79),
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: Padding(
@@ -126,7 +137,11 @@ class Signin extends StatefulWidget {
                             suffixIcon: IconButton(
                               icon: const Icon(Icons.visibility), onPressed: () {}),
                             hintText: "Password",
-                            hintStyle: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                            hintStyle: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontFamily: "Quicksand",
+                              fontWeight: FontWeight.w300),
                             border: InputBorder.none,
                         ),
                       ),
@@ -140,32 +155,49 @@ class Signin extends StatefulWidget {
                       width: 150,
                       height: 40,
                       child: ElevatedButton(
-                        onPressed: () {},
-                        child: Text('Login'),
+                        onPressed: () => Get.to(() => OrganizerHome()),
+                        child: Text(
+                          'Log in',
+                          style: TextStyle(
+                            fontFamily: "Quicksand",
+                            fontWeight: FontWeight.w600
+                          ),
+                        ),
                         style: ElevatedButton.styleFrom(
                           shape: StadiumBorder(),
-                          primary: Color.fromARGB(255, 235, 19, 145),
+                          primary: Color.fromARGB(255, 54, 60, 79),
                         ),
                       ),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.149,
-                        top: MediaQuery.of(context).size.height * 0.08),
-                    child: Text.rich(
-                      TextSpan(
-                        text: "Don't already Have an account? ",
-                        style: const TextStyle(color: Colors.black87, fontSize: 16),
-                        children: [
-                          TextSpan(
-                              text: "Sign Up",
-                              style: const TextStyle(color: Colors.blue, fontSize: 16),
-                              recognizer: TapGestureRecognizer()..onTap = (){
-                                Navigator.push(context, MaterialPageRoute(builder:(context) => daftar()),);
-                              } 
+                  Center(
+                    child: Container(
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.08),
+                      child: Text.rich(
+                        TextSpan(
+                          text: "Don't already Have an account? ",
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontSize: 15,
+                            fontFamily: "Quicksand",
+                            fontWeight: FontWeight.w400
                           ),
-                        ]
+                          children: [
+                            TextSpan(
+                                text: "Sign Up",
+                                style: const TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 15,
+                                  fontFamily: "Quicksand",
+                                  fontWeight: FontWeight.w400
+                                ),
+                                recognizer: TapGestureRecognizer()..onTap = (){
+                                  Get.to(() => daftar());
+                                } 
+                            ),
+                          ]
+                        ),
                       ),
                     ),
                   )
