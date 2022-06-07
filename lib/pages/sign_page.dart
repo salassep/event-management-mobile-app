@@ -1,9 +1,10 @@
 import 'package:event_management_app/pages/login_page.dart';
+import 'package:event_management_app/services/authentication_service.dart';
+import 'package:event_management_app/services/user_services.dart';
+import 'package:event_management_app/validator/validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-// import 'package:flutter/src/foundation/key.dart';
-// import 'package:flutter/src/widgets/framework.dart';
 
 class daftar extends StatefulWidget {
   const daftar({Key? key}) : super(key: key);
@@ -15,7 +16,31 @@ class daftar extends StatefulWidget {
 enum SingingCharacter { peserta, organizer }
 
 class _daftarState extends State<daftar> {
+
+  final _nameController = TextEditingController();
+  final _noTelpController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passController = TextEditingController();
+
   SingingCharacter? _character = SingingCharacter.peserta;
+
+  String getAkses(){
+    if(_character == SingingCharacter.peserta) {
+      return "Peserta";
+    } else {
+      return "Organizer";
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _noTelpController.dispose();
+    _emailController.dispose();
+    _passController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,6 +117,7 @@ class _daftarState extends State<daftar> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 12.0),
                             child: TextField(
+                              controller: _nameController,
                               maxLines: 1,
                               textInputAction: TextInputAction.done,
                               keyboardType: TextInputType.name,
@@ -135,6 +161,7 @@ class _daftarState extends State<daftar> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 12.0),
                             child: TextField(
+                              controller: _noTelpController,
                               maxLines: 1,
                               textInputAction: TextInputAction.done,
                               keyboardType: TextInputType.phone,
@@ -178,6 +205,7 @@ class _daftarState extends State<daftar> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 12.0),
                             child: TextField(
+                              controller: _emailController,
                               maxLines: 1,
                               textInputAction: TextInputAction.done,
                               keyboardType: TextInputType.emailAddress,
@@ -221,6 +249,7 @@ class _daftarState extends State<daftar> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 12.0),
                             child: TextField(
+                              controller: _passController,
                               maxLines: 1,
                               textInputAction: TextInputAction.done,
                               keyboardType: TextInputType.text,
@@ -328,7 +357,26 @@ class _daftarState extends State<daftar> {
                       width: 150,
                       height: 40,
                       child: ElevatedButton(
-                        onPressed: () => Get.to(Signin()),
+                        onPressed: () async {
+                          var validator =  SignUpValidator(
+                              _nameController.value.text,
+                              _noTelpController.value.text,
+                              _emailController.value.text,
+                              _passController.value.text,
+                            );
+                          if(validator){
+                              validator = await AuthServices.createUser(_emailController.value.text, _passController.value.text);
+                              if(validator){
+                                await UserServices.addUser(
+                                  _nameController.value.text,
+                                  _noTelpController.value.text,
+                                  _emailController.value.text,
+                                  getAkses(),
+                                );
+                                Get.to(() => Signin());
+                              }
+                            }
+                          },
                         child: Text(
                           'Daftar',
                           style: TextStyle(
@@ -363,9 +411,7 @@ class _daftarState extends State<daftar> {
                                     fontSize: 15,
                                     fontFamily: "Quicksand",
                                   ),
-                                  recognizer: TapGestureRecognizer()..onTap = (){
-                                   Navigator.push(context, MaterialPageRoute(builder:(context) => Signin()),);
-                                  } 
+                                  recognizer: TapGestureRecognizer()..onTap = () => Get.to(() => Signin()) 
                               ),
                             ]),
                       ),

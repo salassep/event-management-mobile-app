@@ -1,12 +1,10 @@
-import 'dart:ui';
 import 'package:event_management_app/pages/about_page.dart';
 import 'package:event_management_app/pages/event_page.dart';
 import 'package:event_management_app/pages/login_page.dart';
 import 'package:event_management_app/pages/main_page.dart';
 import 'package:event_management_app/pages/organizer/organizer_main_page.dart';
-import 'package:event_management_app/pages/profile_page.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:event_management_app/pages/profile/profile_page.dart';
+import 'package:event_management_app/services/authentication_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -317,7 +315,10 @@ class OrganizerAppDrawer extends StatelessWidget {
             Container(
               height: 40,
               child: ListTile(
-                onTap: () => Get.off(() => Signin()),
+                onTap: () async {
+                  await AuthServices.signOut();
+                  Get.off(() => Signin());
+                },
                 title: Align(
                   alignment: Alignment(-1.12,-0.7),
                   child: Row(

@@ -1,6 +1,10 @@
+import 'package:event_management_app/pages/landing_page.dart';
 import 'package:event_management_app/pages/main_page.dart';
 import 'package:event_management_app/pages/organizer/organizer_main_page.dart';
 import 'package:event_management_app/pages/sign_page.dart';
+import 'package:event_management_app/services/authentication_service.dart';
+import 'package:event_management_app/services/user_services.dart';
+import 'package:event_management_app/validator/validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -36,7 +40,7 @@ class Signin extends StatefulWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 InkWell(
-                  onTap: () => Get.back(),
+                  onTap: () => Get.off(() => LandingPage()),
                   child: const Icon(
                     Icons.arrow_back_ios_new_rounded,
                     color: Colors.white,
@@ -55,13 +59,6 @@ class Signin extends StatefulWidget {
                     fontWeight: FontWeight.w600
                   ),
                 ),
-                // IconButton(
-                //   icon: Icon(Icons.person_add_alt_1_rounded),
-                //   tooltip: 'Regist Icon',
-                //   onPressed: (){
-                //     Navigator.push(context, MaterialPageRoute(builder:(context) => daftar()),);
-                //   },
-                // ),
               ],
             ),
           ),
@@ -100,6 +97,7 @@ class Signin extends StatefulWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: TextField(
+                        controller: _emailController,
                         maxLines: 1,
                         textInputAction: TextInputAction.done,
                         keyboardType: TextInputType.emailAddress,
@@ -129,6 +127,7 @@ class Signin extends StatefulWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: TextField(
+                        controller: _passwordController,
                         maxLines: 1,
                         textInputAction: TextInputAction.done,
                         keyboardType: TextInputType.text,
@@ -155,7 +154,22 @@ class Signin extends StatefulWidget {
                       width: 150,
                       height: 40,
                       child: ElevatedButton(
-                        onPressed: () => Get.to(() => OrganizerHome()),
+                        onPressed: () async {
+                          var validator = LogInValidator(
+                            _emailController.value.text,
+                            _passwordController.value.text
+                          );
+                          if(validator){
+                            validator = await AuthServices.signInWithEmail(
+                              _emailController.value.text, 
+                              _passwordController.value.text
+                            );
+                            if(validator){
+                              var akses = UserServices.getAccess();
+                              akses == "Peserta" ? Get.to(() => Home()) : Get.to(() => OrganizerHome());
+                            }
+                          }
+                        },
                         child: Text(
                           'Log in',
                           style: TextStyle(
@@ -176,7 +190,7 @@ class Signin extends StatefulWidget {
                           top: MediaQuery.of(context).size.height * 0.08),
                       child: Text.rich(
                         TextSpan(
-                          text: "Don't already Have an account? ",
+                          text: "Sudah punya akun? ",
                           style: const TextStyle(
                             color: Colors.black87,
                             fontSize: 15,
