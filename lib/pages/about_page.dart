@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:event_management_app/controller/user_controller.dart';
 import 'package:event_management_app/services/user_services.dart';
 import 'package:event_management_app/widgets/drawer.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ import 'package:get/get.dart';
 
 class AboutPage extends StatelessWidget {
 
-  var akses = UserServices.getAccess();
+  final UserController userController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class AboutPage extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      drawer: akses == "Peserta" ? AppDrawer() : OrganizerAppDrawer(),
+      drawer: userController.akses.value == "Peserta" ? AppDrawer() : OrganizerAppDrawer(),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

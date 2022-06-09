@@ -72,7 +72,66 @@ class AuthServices{
     return false;
   }
 
-  static Future signOut() async{
-    await _auth.signOut();
+  static Future updateUserEmail(String newEmail, String pass) async {
+    final user = _auth.currentUser;
+
+    try {
+      if(user != null) {
+        await _auth.signInWithEmailAndPassword(
+          email: user.email.toString(), 
+          password: pass,
+        ).then((dataCredential){
+          dataCredential.user?.updateEmail(newEmail);
+        });  
+      }
+      return true;
+    } on FirebaseAuthException catch (e) {
+      Get.defaultDialog(
+        backgroundColor: Colors.white,
+        middleText: "$e",
+        middleTextStyle: TextStyle(
+          fontFamily: "Quicksand",
+        ),
+        radius: 30,
+      );
+      return false; 
+    }
+  }
+
+  static Future changePassword(String oldPass, String newPass) async {
+    final user = _auth.currentUser;
+    try {
+      if(user != null) {
+        await _auth.signInWithEmailAndPassword(
+          email: user.email.toString(), 
+          password: oldPass,
+        ).then((dataCredential){
+           dataCredential.user?.updatePassword(newPass);
+        });  
+      }
+      return true;
+    } on FirebaseAuthException catch (e) {
+      Get.defaultDialog(
+        backgroundColor: Colors.white,
+        middleText: "$e",
+        middleTextStyle: TextStyle(
+          fontFamily: "Quicksand",
+        ),
+        radius: 30,
+      );
+      return false; 
+    } catch (e) {
+      Get.defaultDialog(
+        backgroundColor: Colors.white,
+        middleText: "$e",
+        radius: 30,
+      );
+      return false;
+    }   
+  }
+
+
+  static signOut(){
+    _auth.signOut();
   }
 }

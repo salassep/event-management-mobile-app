@@ -1,19 +1,14 @@
 import 'package:event_management_app/pages/main_page.dart';
-import 'package:event_management_app/pages/sign_page.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../controller/user_controller.dart';
 
+class EditProfile extends StatelessWidget {
 
-class EditProfile extends StatefulWidget {
-  const EditProfile({Key? key}) : super(key: key);
+  final UserUpdateController _userUpdateController = Get.put(UserUpdateController());
 
-  @override
-  State<EditProfile> createState() => _EditProfileState();
-}
-
-class _EditProfileState extends State<EditProfile> {
-
+  var isEmailChange = false;
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,13 +46,6 @@ class _EditProfileState extends State<EditProfile> {
                     fontWeight: FontWeight.w600
                   ),
                 ),
-                // IconButton(
-                //   icon: Icon(Icons.person_add_alt_1_rounded),
-                //   tooltip: 'Regist Icon',
-                //   onPressed: (){
-                //     Navigator.push(context, MaterialPageRoute(builder:(context) => daftar()),);
-                //   },
-                // ),
               ],
             ),
           ),
@@ -74,15 +62,6 @@ class _EditProfileState extends State<EditProfile> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Container(
-                  //   height: 200,
-                  //   width: MediaQuery.of(context).size.width * 0.8,
-                  //   margin: EdgeInsets.only(
-                  //       left: MediaQuery.of(context).size.width * 0.09),
-                  //   // child: Image.asset(
-                  //   //   "assets/images/logo.png",
-                  //   //   scale: 2,
-                  //   // ),
                   SizedBox(
                     height: 50,
                   ),
@@ -104,6 +83,7 @@ class _EditProfileState extends State<EditProfile> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: TextField(
+                        controller: _userUpdateController.newNameController,
                         maxLines: 1,
                         textInputAction: TextInputAction.done,
                         keyboardType: TextInputType.emailAddress,
@@ -142,10 +122,10 @@ class _EditProfileState extends State<EditProfile> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: TextField(
+                        controller: _userUpdateController.newTelpController,
                         maxLines: 1,
                         textInputAction: TextInputAction.done,
                         keyboardType: TextInputType.text,
-                        obscureText: true,
                         decoration: InputDecoration(
                           hintText: "No. Telpon",
                           hintStyle: TextStyle(
@@ -180,6 +160,7 @@ class _EditProfileState extends State<EditProfile> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: TextField(
+                        controller: _userUpdateController.newEmailController,
                         maxLines: 1,
                         textInputAction: TextInputAction.done,
                         keyboardType: TextInputType.text,
@@ -194,13 +175,44 @@ class _EditProfileState extends State<EditProfile> {
                           border: InputBorder.none,
                           suffixIcon: const SizedBox(),
                         ),
+                        onChanged: (value) {
+                          isEmailChange = !isEmailChange;
+                        },
                       ),
                     )
                   ),
                   const SizedBox(
                     height: 16,
                   ),
-                   SizedBox(
+                  if(isEmailChange)                  Container(
+                    margin: const EdgeInsets.only(left: 20, right: 20),
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(50, 54, 60, 79),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: TextField(
+                        controller: _userUpdateController.passwordController,
+                        maxLines: 1,
+                        textInputAction: TextInputAction.done,
+                        keyboardType: TextInputType.text,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.visibility), onPressed: () {}),
+                            hintText: "Password",
+                            hintStyle: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontFamily: "Quicksand",
+                              fontWeight: FontWeight.w300),
+                            border: InputBorder.none,
+                        ),
+                      ),
+                    )
+                  ),
+                  SizedBox(
                       height: 30 ,
                   ),
                   Center(
@@ -208,7 +220,10 @@ class _EditProfileState extends State<EditProfile> {
                       width: 150,
                       height: 40,
                       child: ElevatedButton(
-                        onPressed: () => Get.to(Home()),
+                        onPressed: () {
+                          _userUpdateController.onPressed();
+                          Get.back();
+                        },
                         child: Text(
                           'Simpan',
                           style: TextStyle(
@@ -223,37 +238,6 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                     ),
                   ),
-                  // Center(
-                  //   child: Container(
-                  //     margin: EdgeInsets.only(
-                  //         top: MediaQuery.of(context).size.height * 0.08),
-                  //     child: Text.rich(
-                  //       TextSpan(
-                  //         text: "Don't already Have an account? ",
-                  //         style: const TextStyle(
-                  //           color: Colors.black87,
-                  //           fontSize: 15,
-                  //           fontFamily: "Quicksand",
-                  //           fontWeight: FontWeight.w400
-                  //         ),
-                  //         children: [
-                  //           TextSpan(
-                  //               text: "Sign Up",
-                  //               style: const TextStyle(
-                  //                 color: Colors.blue,
-                  //                 fontSize: 15,
-                  //                 fontFamily: "Quicksand",
-                  //                 fontWeight: FontWeight.w400
-                  //               ),
-                  //               recognizer: TapGestureRecognizer()..onTap = (){
-                  //                 Navigator.push(context, MaterialPageRoute(builder:(context) => daftar()),);
-                  //               } 
-                  //           ),
-                  //         ]
-                  //       ),
-                  //     ),
-                  //   ),
-                  // )
                 ],
               ),
             ),

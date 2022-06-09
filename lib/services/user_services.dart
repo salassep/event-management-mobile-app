@@ -17,14 +17,14 @@ class UserServices {
         'notelp': notelp,
         'email': email,
         'akses': akses,
-        'imageUrl': "assets/images/user.png",
+        'image_url': "assets/images/user.png",
       }
     );
   }
 
-  static Future getAccess() async{
+  static Future<String> getAccess() async{
 
-    final email = AuthServices.getCurrentEmail();
+    final email = await AuthServices.getCurrentEmail();
 
     var hakAkses = await users.where("email", isEqualTo: email).get().then((value) {
       return value.docs[0].get("akses");
@@ -33,11 +33,11 @@ class UserServices {
     return hakAkses;
   }
 
-  static Future getUserIdDoc() async {
+  static Future<String> getUserIdDoc() {
 
     final email = AuthServices.getCurrentEmail();
 
-    var userIdDoc = await users.where("email", isEqualTo: email).get().then((value) {
+    var userIdDoc = users.where("email", isEqualTo: email).get().then((value) {
       return value.docs[0].id;
     });
 
@@ -45,12 +45,39 @@ class UserServices {
 
   }
 
-  static Future getUserData() async{
+  static Future getUserData() async {
+    
+    final userId = await getUserIdDoc();
 
-    final userIdDoc = await getUserIdDoc();
-
-    var userData = await users.doc(userIdDoc).snapshots();
+    var userData = users.doc(userId).get().then((value) {
+      return {
+        "name" : value.get("name"),
+        "email": value.get("email"),
+        "notelp": value.get("notelp"),
+        "akses": value.get("akses"),
+        "image_url": value.get("image_url")
+      };
+    });
 
     return userData;
+  }
+
+  static Future updateUser(String newName, String newNotelp, String newEmail, String pass ) async {
+
+    final email = AuthServices.getCurrentEmail();
+    final userId = await getUserIdDoc();
+    var check = true;
+
+    if (email != newEmail) {
+      check = await AuthServices.updateUserEmail(newEmail, pass).then((value) => value);
+    }
+
+    if(check) {
+      users.doc(userId).update({
+        "name": newName,
+        "notelp": newNotelp,
+        "email": newEmail,
+      });
+    }
   }
 }

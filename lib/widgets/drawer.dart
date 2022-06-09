@@ -1,3 +1,4 @@
+import 'package:event_management_app/controller/user_controller.dart';
 import 'package:event_management_app/pages/about_page.dart';
 import 'package:event_management_app/pages/event_page.dart';
 import 'package:event_management_app/pages/login_page.dart';
@@ -9,7 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AppDrawer extends StatelessWidget {
-  const AppDrawer({Key? key}) : super(key: key);
+  AppDrawer({Key? key}) : super(key: key);
+
+  final UserController userController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +42,7 @@ class AppDrawer extends StatelessWidget {
                     ),
                     Text.rich(
                       TextSpan(
-                        text: "Anonymous\n",
+                        text: "${userController.name.value}\n",
                         style: TextStyle(
                           fontFamily: "Quicksand",
                           color: Colors.white
@@ -92,6 +95,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                 ),
                 onTap: () => Get.to(() => Home()),
+                
               ),
             ),
             Container(
@@ -160,7 +164,10 @@ class AppDrawer extends StatelessWidget {
             Container(
               height: 40,
               child: ListTile(
-                onTap: () => Get.off(() => Signin()),
+                onTap: () {
+                  AuthServices.signOut();
+                  Get.off(() => Signin());
+                },
                 title: Align(
                   alignment: Alignment(-1.12,-0.7),
                   child: Row(
@@ -193,8 +200,11 @@ class AppDrawer extends StatelessWidget {
   }
 
 }
+
 class OrganizerAppDrawer extends StatelessWidget {
-  const OrganizerAppDrawer({Key? key}) : super(key: key);
+  OrganizerAppDrawer({Key? key}) : super(key: key);
+
+  final UserController userController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -213,7 +223,7 @@ class OrganizerAppDrawer extends StatelessWidget {
                   children: [
                     GestureDetector(
                       child: Image.asset(
-                        "assets/images/user.png",
+                        userController.image_url.value,
                         height: 50,
                         width: 50,
                       ),
@@ -224,7 +234,7 @@ class OrganizerAppDrawer extends StatelessWidget {
                     ),
                     Text.rich(
                       TextSpan(
-                        text: "Anonymous\n",
+                        text: "${userController.name.value}\n",
                         style: TextStyle(
                           fontFamily: "Quicksand",
                           color: Colors.white
@@ -315,8 +325,8 @@ class OrganizerAppDrawer extends StatelessWidget {
             Container(
               height: 40,
               child: ListTile(
-                onTap: () async {
-                  await AuthServices.signOut();
+                onTap: () {
+                  AuthServices.signOut();
                   Get.off(() => Signin());
                 },
                 title: Align(

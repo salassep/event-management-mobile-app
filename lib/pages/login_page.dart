@@ -1,3 +1,4 @@
+import 'package:event_management_app/controller/user_controller.dart';
 import 'package:event_management_app/pages/landing_page.dart';
 import 'package:event_management_app/pages/main_page.dart';
 import 'package:event_management_app/pages/organizer/organizer_main_page.dart';
@@ -164,9 +165,12 @@ class Signin extends StatefulWidget {
                               _emailController.value.text, 
                               _passwordController.value.text
                             );
+  
                             if(validator){
-                              var akses = UserServices.getAccess();
-                              akses == "Peserta" ? Get.to(() => Home()) : Get.to(() => OrganizerHome());
+                              UserServices.getUserData().then((value){                                    
+                                value['akses'] == "Peserta" 
+                                  ? Get.off(() => Home()) : Get.off(() => OrganizerHome());
+                              });
                             }
                           }
                         },

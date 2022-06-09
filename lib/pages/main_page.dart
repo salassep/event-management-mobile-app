@@ -1,18 +1,18 @@
-import 'dart:ui';
+import 'package:event_management_app/controller/user_controller.dart';
 import 'package:event_management_app/util/get_date.dart';
 import 'package:event_management_app/pages/detail_page.dart';
 import 'package:event_management_app/widgets/drawer.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 
 class Home extends StatelessWidget {
-  const Home({Key? key}) : super(key: key);
+
+  final UserController userController = Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {
+    userController.pleaseFill();
     var date = GetDate();
     return Scaffold(
       backgroundColor: Colors.white,
