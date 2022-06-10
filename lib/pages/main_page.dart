@@ -212,7 +212,7 @@ class Home extends StatelessWidget {
               height: 20,
             ),
             GestureDetector(
-              onTap: (() => Get.to(DetailPage())),
+              onTap: (() => Get.to(DetailPage("",""))),
               child: Container(
                 color: Color.fromARGB(255, 226, 225, 225),
                 height: 200,

@@ -22,6 +22,7 @@ class Signin extends StatefulWidget {
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final UserController userController = Get.put(UserController());
 
   @override
  Widget build(BuildContext context) {

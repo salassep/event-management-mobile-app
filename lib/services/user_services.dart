@@ -1,10 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:event_management_app/pages/main_page.dart';
-import 'package:event_management_app/pages/organizer/organizer_main_page.dart';
 import 'package:event_management_app/services/authentication_service.dart';
-import 'package:event_management_app/widgets/drawer.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 CollectionReference users = firestore.collection("users");

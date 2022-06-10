@@ -8,6 +8,7 @@ class UserController extends GetxController {
   final email = "".obs;
   final akses = "".obs;
   final image_url = "".obs;
+  final idUser = "".obs;
 
   void pleaseFill() {
     UserServices.getUserData().then((data){
@@ -16,6 +17,12 @@ class UserController extends GetxController {
       email.value = data['email'];
       akses.value = data['akses'];
       image_url.value = data['image_url'];
+    });
+  }
+
+  void getId(){
+    UserServices.getUserIdDoc().then((id) {
+      idUser.value = id;
     });
   }
 }

@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_management_app/controller/user_controller.dart';
 import 'package:event_management_app/pages/organizer/add_event.dart';
+import 'package:event_management_app/services/event_services.dart';
+import 'package:event_management_app/services/user_services.dart';
 import 'package:event_management_app/util/get_date.dart';
 import 'package:event_management_app/pages/detail_page.dart';
 import 'package:event_management_app/widgets/drawer.dart';
@@ -13,6 +16,7 @@ class OrganizerHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    userController.getId();
     userController.pleaseFill();
     var date = GetDate();
     return Scaffold(
@@ -57,7 +61,7 @@ class OrganizerHome extends StatelessWidget {
       drawer: OrganizerAppDrawer(),
       body: SafeArea(
         child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 18),
+          padding: EdgeInsets.fromLTRB(18, 0, 18, 60),
           children: [
             Text(
               "Buat Eventmu !",
@@ -108,34 +112,79 @@ class OrganizerHome extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            GestureDetector(
-              onTap: () => Get.to(() => DetailPage()),
-              child: Container(
-                color: Color.fromARGB(255, 226, 225, 225),
-                height: 200,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      left: 15,
-                      bottom: 15,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 6, horizontal: 5),
-                        color: Color.fromARGB(255, 54, 60, 79),
-                        child: Text(
-                          "27 June | 09.30",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontFamily: "Quicksand",
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white
+            Obx(() =>
+              StreamBuilder<QuerySnapshot>(
+                stream: events.where('idOrganizer', isEqualTo: userController.idUser.value).snapshots(),
+                builder: (_, snapshot) {
+                  return (snapshot.hasData) 
+                    ? ListView.builder(
+                      padding: EdgeInsets.zero,
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        DocumentSnapshot doc = snapshot.data!.docs[index];
+                        return GestureDetector(
+                          onTap: () => Get.to(() => DetailPage(doc.id, doc['price'])),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                color: Color.fromARGB(255, 226, 225, 225),
+                                height: 200,
+                                width: MediaQuery.of(context).size.width,
+                                child: Stack(
+                                  children: [
+                                    Center(
+                                      child: Image.asset(
+                                        "assets/images/logo.png",
+                                        width: 150,
+                                        height: 150,
+                                        alignment: Alignment.center,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      left: 15,
+                                      bottom: 15,
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(vertical: 6, horizontal: 5),
+                                        color: Color.fromARGB(255, 54, 60, 79),
+                                        child: Text(
+                                          "${doc['schedule']['day']} - ${doc['schedule']['month']} - ${doc['schedule']['year']} | ${doc['schedule']['clock']}.${doc['schedule']['minute']}",
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontFamily: "Quicksand",
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.white
+                                          ),
+                                        ),
+                                      )
+                                    )
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                doc['title'],
+                                style: TextStyle(
+                                  fontFamily: "Quicksand",
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18
+                                ),
+                              ),
+                              SizedBox(
+                                height: 15,
+                              )
+                            ],
                           ),
-                        ),
-                      )
-                    )
-                  ],
-                ),
-              ),
-            )
+                        );
+                      },
+                    ) : Text ("Mengambil data...");
+                }
+              ), 
+            ),
           ],
         )
       ),

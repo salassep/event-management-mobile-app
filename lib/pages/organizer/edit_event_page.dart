@@ -1,20 +1,108 @@
-import 'package:event_management_app/controller/Controller.dart';
-import 'package:event_management_app/pages/main_page.dart';
-import 'package:event_management_app/pages/sign_page.dart';
-import 'package:flutter/gestures.dart';
+import 'package:event_management_app/controller/event_controller.dart';
+import 'package:event_management_app/pages/organizer/category_event.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 
 class EditEvent extends StatefulWidget {
-  const EditEvent({Key? key}) : super(key: key);
+  final String idEvent;
+  const EditEvent(this.idEvent);
 
   @override
   State<EditEvent> createState() => _EditEventState();
 }
 
 class _EditEventState extends State<EditEvent> {
+
   final CheckBoxController b = Get.put(CheckBoxController());
+  final CreateEventTextController _textController = Get.put(CreateEventTextController());
+  final CreateEventSchedule _scheduleController = Get.put(CreateEventSchedule());
+
+    /// Tanggal sekarang + 1 hari & jam sekarang.
+  DateTime selectedDate = DateTime.now().add(new Duration(days: 1));
+  TimeOfDay selectedTime = TimeOfDay.now();
+
+  _selectDateAndTime(BuildContext context) async {
+    DateTime now = DateTime.now();
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate, // Refer step 1
+      firstDate:
+          DateTime(now.year, now.month, now.day).add(new Duration(days: 1)),
+      lastDate: DateTime(now.year + 1),
+      helpText: 'Tentukan Jadwal Event', // Can be used as title
+      cancelText: 'Kembali',
+      confirmText: 'Simpan',
+    );
+    if (pickedDate != null && pickedDate != selectedDate)
+      setState(() {
+        selectedDate = pickedDate;
+      });
+
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
+      helpText: 'Tentukan Waktu Event', // Can be used as title
+      cancelText: 'Kembali',
+      confirmText: 'Simpan',
+    );
+
+    if (pickedTime != null)
+      setState(() {
+        selectedTime = pickedTime;
+      });
+  }
+
+  Widget dateChooser() => Row(
+          children: [
+            Icon(
+              Icons.date_range,
+              color: Color.fromARGB(255, 54, 60, 79),
+            ),
+            SizedBox(
+              width: 16,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+              Text(
+                "Tanggal Event: ",
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                    fontFamily: "Quicksand"
+                ),
+              ),
+              Text(
+                "${selectedDate.day}-${selectedDate.month}-${selectedDate.year} ${selectedTime.hour}:${selectedTime.minute}",
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: "Quicksand",
+                  fontSize: 16
+                ),
+              ),
+            ]),
+            Spacer(),
+            ElevatedButton(
+              onPressed: () => _selectDateAndTime(context), // Refer step 3
+              child: Text(
+                'Ubah...',
+                style: TextStyle(
+                  fontFamily: "Quicksand",
+                  fontWeight: FontWeight.w600
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                onPrimary: Colors.white,
+                primary: Color.fromARGB(255, 54, 60, 79),
+                elevation: 2,
+                side: BorderSide(color: Color.fromARGB(55, 54, 60, 79), width: 1),
+                padding: EdgeInsets.all(5),
+              ),
+            ),
+          ],
+      );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +121,7 @@ class _EditEventState extends State<EditEvent> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 InkWell(
+                  onTap: () => Get.back(),
                   child: const Icon(
                     Icons.arrow_back_ios_new_rounded,
                     color: Colors.white,
@@ -43,7 +132,7 @@ class _EditEventState extends State<EditEvent> {
                   width: 10,
                 ),
                 Text(
-                  "Pengaturan Event",
+                  "Update Event",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 22,
@@ -51,13 +140,6 @@ class _EditEventState extends State<EditEvent> {
                     fontWeight: FontWeight.w600
                   ),
                 ),
-                // IconButton(
-                //   icon: Icon(Icons.person_add_alt_1_rounded),
-                //   tooltip: 'Regist Icon',
-                //   onPressed: (){
-                //     Navigator.push(context, MaterialPageRoute(builder:(context) => daftar()),);
-                //   },
-                // ),
               ],
             ),
           ),
@@ -67,7 +149,7 @@ class _EditEventState extends State<EditEvent> {
             width: MediaQuery.of(context).size.width,
             child: SingleChildScrollView(
               child: Container(
-                  height: MediaQuery.of(context).size.height * 1.2,
+                  height: MediaQuery.of(context).size.height * 1.25,
                   width: MediaQuery.of(context).size.width,
                   decoration: const BoxDecoration(
                       color: Colors.white,
@@ -77,17 +159,8 @@ class _EditEventState extends State<EditEvent> {
                   child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Container(
-                          //   height: 200,
-                          //   width: MediaQuery.of(context).size.width * 0.8,
-                          //   margin: EdgeInsets.only(
-                          //       left: MediaQuery.of(context).size.width * 0.09),
-                          //   // child: Image.asset(
-                          //   //   "assets/images/logo.png",
-                          //   //   scale: 2,
-                          //   // ),
                           SizedBox(
-                            height: 50,
+                            height: 30,
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 25),
@@ -107,6 +180,7 @@ class _EditEventState extends State<EditEvent> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 12.0),
                               child: TextField(
+                                controller: _textController.eventNameController,
                                 maxLines: 1,
                                 textInputAction: TextInputAction.done,
                                 keyboardType: TextInputType.emailAddress,
@@ -124,7 +198,28 @@ class _EditEventState extends State<EditEvent> {
                               ),
                             )
                           ),
-                           const SizedBox(
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 25),
+                            child: Text(
+                              "Jadwal",
+                              style: TextStyle(
+                                fontFamily: "Quicksand"
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: 20),
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(50, 54, 60, 79),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: dateChooser()
+                          ),
+                          const SizedBox(
                             height: 16,
                           ),
                           Padding(
@@ -145,10 +240,10 @@ class _EditEventState extends State<EditEvent> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 12.0),
                               child: TextField(
+                                controller: _textController.linkController,
                                 maxLines: 1,
                                 textInputAction: TextInputAction.done,
                                 keyboardType: TextInputType.text,
-                                obscureText: true,
                                 decoration: InputDecoration(
                                   hintText: "URL Event",
                                   hintStyle: TextStyle(
@@ -183,10 +278,10 @@ class _EditEventState extends State<EditEvent> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 12.0),
                               child: TextField(
+                                controller: _textController.lokasiController,
                                 maxLines: 1,
                                 textInputAction: TextInputAction.done,
                                 keyboardType: TextInputType.text,
-                                obscureText: true,
                                 decoration: InputDecoration(
                                   hintText: "Lokasi Event",
                                   hintStyle: TextStyle(
@@ -221,10 +316,10 @@ class _EditEventState extends State<EditEvent> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 12.0),
                               child: TextField(
+                                controller: _textController.hargaController,
                                 maxLines: 1,
                                 textInputAction: TextInputAction.done,
                                 keyboardType: TextInputType.text,
-                                obscureText: true,
                                 decoration: InputDecoration(
                                   hintText: "Harga",
                                   hintStyle: TextStyle(
@@ -259,6 +354,7 @@ class _EditEventState extends State<EditEvent> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 12.0),
                               child: TextFormField(
+                                controller: _textController.deskripsiController,
                                 maxLines: 5,
                                 textInputAction: TextInputAction.done,
                                 keyboardType: TextInputType.text,
@@ -277,13 +373,17 @@ class _EditEventState extends State<EditEvent> {
                             )
                           ),
                           ListTile(
-                            title:Text(
-                              "Publish",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: "Quicksand",
+                            title: Align(
+                              alignment: Alignment(-1.25, 0),
+                              child: Text(
+                                "Publish",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontFamily: "Quicksand",
+                                ),
                               ),
                             ),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                             leading: Obx(
                               ()=> Checkbox(
                                 value: b.isPublish.value, 
@@ -291,7 +391,7 @@ class _EditEventState extends State<EditEvent> {
                               )
                             ),
                           ),
-                          SizedBox(
+                           SizedBox(
                               height: 20 ,
                           ),
                           Center(
@@ -299,9 +399,21 @@ class _EditEventState extends State<EditEvent> {
                               width: 150,
                               height: 40,
                               child: ElevatedButton(
-                                onPressed: () => Get.to(Home()),
+                                onPressed: () {
+                                  _textController.onPressed();
+                                  _scheduleController.onPressed(
+                                    DateFormat('EEEE').format(selectedDate), 
+                                    selectedDate.day, 
+                                    selectedDate.month, 
+                                    selectedDate.year, 
+                                    selectedTime.hour, 
+                                    selectedTime.minute
+                                  );
+                                  _textController.idEvent.value = widget.idEvent;
+                                  Get.to(() => CategoryEvent());
+                                },
                                 child: Text(
-                                  'Simpan',
+                                  'Selanjutnya',
                                   style: TextStyle(
                                     fontFamily: "Quicksand",
                                     fontWeight: FontWeight.w600
