@@ -136,11 +136,16 @@ class OrganizerHome extends StatelessWidget {
                                 child: Stack(
                                   children: [
                                     Center(
-                                      child: Image.asset(
+                                      child: doc['image_url'] == "" ? Image.asset(
                                         "assets/images/logo.png",
                                         width: 150,
                                         height: 150,
                                         alignment: Alignment.center,
+                                      ) : FadeInImage.assetNetwork(
+                                      placeholder: "assets/images/logo.png", 
+                                      image: doc['image_url'],
+                                      width: 250,
+                                      height: 200,
                                       ),
                                     ),
                                     Positioned(

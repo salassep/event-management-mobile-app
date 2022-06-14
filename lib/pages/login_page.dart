@@ -22,9 +22,22 @@ class Signin extends StatefulWidget {
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final UserController userController = Get.put(UserController());
 
-  @override
+ @override
+ void dispose(){
+  _emailController.dispose();
+  _passwordController.dispose();
+  super.dispose();
+ }
+
+ @override
+ void initState(){
+  super.initState();
+  _emailController.text = "";
+  _passwordController.text = "";
+ }
+
+ @override
  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -166,7 +179,7 @@ class Signin extends StatefulWidget {
                               _emailController.value.text, 
                               _passwordController.value.text
                             );
-  
+
                             if(validator){
                               UserServices.getUserData().then((value){                                    
                                 value['akses'] == "Peserta" 

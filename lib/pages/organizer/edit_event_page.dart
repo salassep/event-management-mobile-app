@@ -1,8 +1,13 @@
 import 'package:event_management_app/controller/event_controller.dart';
 import 'package:event_management_app/pages/organizer/category_event.dart';
+import 'package:event_management_app/services/event_services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:path/path.dart' as Path;
 
 
 class EditEvent extends StatefulWidget {
@@ -103,8 +108,91 @@ class _EditEventState extends State<EditEvent> {
           ],
       );
 
+        firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
+
+  File? _photo;
+  final ImagePicker _picker = ImagePicker();
+
+  Future imgFromGallery() async {
+    await _picker.pickImage(source: ImageSource.gallery).then((value){
+      if (value != null) {
+        _photo = File(value.path);
+        uploadFile(_photo);
+      } else {
+        Get.defaultDialog(
+          middleText: "Tidak ada gambar yang dipillih"
+        );
+      }
+    });
+  }
+
+  Future imgFromCamera() async {
+    await _picker.pickImage(source: ImageSource.camera).then((value){
+      if (value != null) {
+        _photo = File(value.path);
+        uploadFile(_photo);
+      } else {
+        Get.defaultDialog(
+          middleText: "Tidak ada gambar yang dipillih"
+        );
+      }
+    });
+  }
+
+  Future uploadFile(filePhoto) async {
+    if (filePhoto == null) return;
+    final fileName = Path.basename(filePhoto!.path);
+    final destination = 'files/profiles';
+
+    try {
+      final ref = firebase_storage.FirebaseStorage.instance
+          .ref(destination)
+          .child('$fileName');
+      await ref.putFile(filePhoto!);
+      
+      String url = (await ref.getDownloadURL()).toString();
+
+      EventServices.updatePicture(url);
+    } catch (e) {
+      Get.defaultDialog(
+        middleText: "Terjadi kesalahan"
+      );
+    }
+  }
+
+  void showPicker(context) {
+    showModalBottomSheet(
+    context: context,
+    builder: (BuildContext bc) {
+      return SafeArea(
+        child: Container(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                  leading: new Icon(Icons.photo_library),
+                  title: new Text('Gallery'),
+                  onTap: () {
+                    imgFromGallery();
+                    Navigator.of(context).pop();
+                  }),
+              ListTile(
+                leading: new Icon(Icons.photo_camera),
+                title: new Text('Camera'),
+                onTap: () {
+                  imgFromCamera();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    _textController.idEvent.value = widget.idEvent;
     return Scaffold(
       body: SafeArea(
           child: Stack(
@@ -149,7 +237,7 @@ class _EditEventState extends State<EditEvent> {
             width: MediaQuery.of(context).size.width,
             child: SingleChildScrollView(
               child: Container(
-                  height: MediaQuery.of(context).size.height * 1.25,
+                  height: MediaQuery.of(context).size.height * 1.3,
                   width: MediaQuery.of(context).size.width,
                   decoration: const BoxDecoration(
                       color: Colors.white,
@@ -162,6 +250,21 @@ class _EditEventState extends State<EditEvent> {
                           SizedBox(
                             height: 30,
                           ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 25),
+                            child: InkWell(
+                              onTap: () => showPicker(context),
+                              child: const Text(
+                                "Ubah Gambar",
+                                style: TextStyle(
+                                  fontFamily: "Quicksand",
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.blue
+                                ),  
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10,),
                           Padding(
                             padding: const EdgeInsets.only(left: 25),
                             child: Text(
@@ -409,7 +512,6 @@ class _EditEventState extends State<EditEvent> {
                                     selectedTime.hour, 
                                     selectedTime.minute
                                   );
-                                  _textController.idEvent.value = widget.idEvent;
                                   Get.to(() => CategoryEvent());
                                 },
                                 child: Text(

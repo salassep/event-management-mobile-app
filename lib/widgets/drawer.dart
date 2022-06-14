@@ -30,10 +30,16 @@ class AppDrawer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      child: Image.asset(
-                        "assets/images/user.png",
-                        height: 50,
-                        width: 50,
+                      child: CircleAvatar(
+                        radius: 30,
+                        child: ClipOval(
+                          child: userController.image_url.value != "" ? FadeInImage.assetNetwork(
+                            placeholder: "assets/images/user.png",
+                            image: userController.image_url.value,
+                            height: 50,
+                            width: 50,
+                          ) : Image.asset("assets/images/user.png", height: 50, width: 50,),
+                        ),
                       ),
                       onTap: () => Get.to(() => ProfilePage()),
                     ),
@@ -222,10 +228,16 @@ class OrganizerAppDrawer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      child: Image.asset(
-                        userController.image_url.value,
-                        height: 50,
-                        width: 50,
+                      child: CircleAvatar(
+                        radius: 30,
+                        child: ClipOval(
+                          child: userController.image_url.value != "" ? FadeInImage.assetNetwork(
+                            placeholder: "assets/images/user.png",
+                            image: userController.image_url.value,
+                            height: 50,
+                            width: 50,
+                          ) : Image.asset("assets/images/user.png", height: 50, width: 50,),
+                        ),
                       ),
                       onTap: () => Get.to(() => ProfilePage()),
                     ),

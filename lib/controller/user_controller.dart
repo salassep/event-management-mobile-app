@@ -1,3 +1,4 @@
+import 'package:event_management_app/services/user_event_services.dart';
 import 'package:event_management_app/services/user_services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,9 @@ class UserController extends GetxController {
   final akses = "".obs;
   final image_url = "".obs;
   final idUser = "".obs;
+  final userEvents = [].obs;
+  final userFavoriteEvents = [].obs;
+  final isFavorite = false.obs;
 
   void pleaseFill() {
     UserServices.getUserData().then((data){
@@ -23,6 +27,15 @@ class UserController extends GetxController {
   void getId(){
     UserServices.getUserIdDoc().then((id) {
       idUser.value = id;
+    });
+  }
+
+  void getUserEvents() {
+    UserEventServices.getUserEvents().then((data){
+      userEvents.value = data;
+    });
+    UserEventServices.getUserFavoriteEvents().then((data){
+      userFavoriteEvents.value = data;
     });
   }
 }

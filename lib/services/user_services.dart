@@ -3,7 +3,6 @@ import 'package:event_management_app/services/authentication_service.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 CollectionReference users = firestore.collection("users");
-
 class UserServices {
   static Future addUser(String name, String notelp, String email, String akses) async {
     await users.add(
@@ -12,7 +11,7 @@ class UserServices {
         'notelp': notelp,
         'email': email,
         'akses': akses,
-        'image_url': "assets/images/user.png",
+        'image_url': "",
       }
     );
   }
@@ -74,5 +73,12 @@ class UserServices {
         "email": newEmail,
       });
     }
+  }
+  static Future updatePictureProfile(String url_image) async {
+    final userId = await getUserIdDoc();
+
+    users.doc(userId).update({
+      "image_url": url_image
+    });
   }
 }

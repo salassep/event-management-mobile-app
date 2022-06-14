@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_management_app/controller/user_controller.dart';
+import 'package:event_management_app/pages/main_page.dart';
 import 'package:event_management_app/pages/organizer/edit_event_page.dart';
 import 'package:event_management_app/pages/organizer/organizer_main_page.dart';
 import 'package:event_management_app/services/event_services.dart';
+import 'package:event_management_app/services/user_event_services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,6 +15,7 @@ class DetailPage extends StatelessWidget {
   DetailPage(this.idEvent, this.price);
 
   final UserController userController = Get.find();
+  bool isSigned = false;
 
   String getMonthName(month){
     var monthInt = int.parse(month);
@@ -38,15 +41,15 @@ class DetailPage extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
-          Container(
+          if (userController.akses.value == "Organizer") Container(
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 primary: Colors.white,
                 elevation: 0,
                 onPrimary: Colors.red,
               ),
-              onPressed: (){
-                events.doc(idEvent).delete().then((value) => Get.off(() => OrganizerHome()));
+              onPressed: () async {
+                await events.doc(idEvent).delete().then((value) => Get.off(() => OrganizerHome()));
               }, 
               child: Icon(
                 Icons.delete,
@@ -71,11 +74,16 @@ class DetailPage extends StatelessWidget {
                   child: Stack(
                     children: [
                       Center(
-                        child: Image.asset(
+                        child: snapshot.data!.get('image_url') == "" ? Image.asset(
                           "assets/images/logo.png",
                           width: 150,
                           height: 150,
                           alignment: Alignment.center,
+                        ) : FadeInImage.assetNetwork(
+                        placeholder: "assets/images/logo.png", 
+                        image: snapshot.data!.get('image_url'),
+                        width: 250,
+                        height: 200,
                         ),
                       ),
                       Positioned(
@@ -177,14 +185,37 @@ class DetailPage extends StatelessWidget {
                             )
                           ),
                         ),
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          color: Color.fromARGB(255, 54, 60, 79),
-                          child: Icon(
-                            Icons.favorite_outline,
-                            color: Colors.white,
-                            size: 20,
+                        GestureDetector(
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            color: Color.fromARGB(255, 54, 60, 79),
+                            child: Obx((){
+                                return 
+                                (!userController.isFavorite.value) 
+                                  ? Icon(
+                                  Icons.favorite_outline,
+                                  color: Colors.white,
+                                  size: 20,
+                                ) : Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                  size: 20,
+                                );
+                              }),
                           ),
+                           onTap: () async {
+                                var dataFavoriteEvent = await UserEventServices.getUserFavoriteEvents();
+                                if(!dataFavoriteEvent.contains(idEvent)){
+                                  userController.isFavorite.value = false;
+                                  await UserEventServices.addFavorite(idEvent).then((value){
+                                    userController.isFavorite.value = true;
+                                  });
+                                } else {
+                                  userController.isFavorite.value = true;
+                                  UserEventServices.deleteFavoriteEvents(idEvent);
+                                  userController.isFavorite.value = false;
+                                }
+                              },
                         ),
                       ],
                     ),
@@ -250,9 +281,34 @@ class DetailPage extends StatelessWidget {
             ),
             Expanded(
               child: FloatingActionButton(
-                onPressed: (){
+                onPressed: () async {
                   if(userController.akses.value == "Organizer"){
                     Get.to(() => EditEvent(idEvent));
+                  } else {
+                    var dataEvent = await UserEventServices.getUserEvents();
+                    if(!dataEvent.contains(idEvent)){
+                      UserEventServices.addUserEvents(idEvent).then((value) {
+                        Get.back();
+                      });
+                    } else {
+                      isSigned = true;
+                      Get.defaultDialog(
+                        middleText: "Anda yakin ingin membatalkan event ini ?",
+                        textConfirm: "Ya",
+                        textCancel: "Tidak",
+                        confirmTextColor: Colors.white,
+                        cancelTextColor: Color.fromARGB(255, 54, 60, 79),
+                        buttonColor: Color.fromARGB(255, 54, 60, 79),
+                        middleTextStyle: TextStyle(
+                          fontFamily: "Quicksand"
+                        ),
+                        onConfirm: () {
+                          print(isSigned);
+                          UserEventServices.deleteUserEvents(idEvent);
+                          Get.off(() => Home());
+                        }
+                      );
+                    }
                   }
                 },
                 backgroundColor: Color.fromARGB(255, 54, 60, 79),
@@ -260,7 +316,7 @@ class DetailPage extends StatelessWidget {
                   borderRadius: BorderRadius.zero
                 ),
                 child: Text(
-                  userController.akses.value == "Organizer" ? "Edit" : "Daftar",
+                  userController.akses.value == "Organizer" ? "Edit" : isSigned ? "Batalkan" : "Daftar",
                   style: TextStyle(
                     letterSpacing: 0,
                     fontFamily: "Quicksand",

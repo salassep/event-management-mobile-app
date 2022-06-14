@@ -27,6 +27,7 @@ class EventServices {
       "deskripsi": createEventTextController.deskripsi.value,
       "isPublish": checkBoxController.isPublish.value,
       "category": createEventCategoryController.deliveryName.value,
+      "image_url": "",
       "schedule": {
         "dayName": createEventSchedule.dayName.value,
         "day": createEventSchedule.day.value,
@@ -47,13 +48,8 @@ class EventServices {
     final CreateEventTextController createEventTextController = Get.find();
     final CheckBoxController checkBoxController = Get.find();
     final CreateEventCategoryController createEventCategoryController = Get.find();
-    final UserController userController = Get.find();
-
-    final userId = await UserServices.getUserIdDoc().then((value) => value);
 
     await events.doc(createEventTextController.idEvent.value).update({
-      "idOrganizer": userId,
-      "organizer": userController.name.value,
       "title": createEventTextController.eventName.value,
       "link": createEventTextController.linkEvent.value,
       "location": createEventTextController.lokasi.value,
@@ -75,5 +71,14 @@ class EventServices {
       Get.delete<CreateEventTextController>();
     });
 
+  }
+
+  static Future updatePicture(String url_image) async {
+
+    final CreateEventTextController createEventTextController = Get.find();
+
+    events.doc(createEventTextController.idEvent.value).update({
+      "image_url": url_image
+    });
   }
 }

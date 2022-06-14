@@ -1,17 +1,104 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:path/path.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_management_app/controller/user_controller.dart';
 import 'package:event_management_app/pages/profile/edit_password.dart';
 import 'package:event_management_app/pages/profile/edit_profile_page.dart';
 import 'package:event_management_app/services/user_services.dart';
 import 'package:event_management_app/widgets/drawer.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+
 
 class ProfilePage extends StatelessWidget {
 
   var idDoc = UserServices.getUserIdDoc();
 
   final UserController userController = Get.find();
+
+  firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
+
+  File? _photo;
+  final ImagePicker _picker = ImagePicker();
+
+  Future imgFromGallery() async {
+    await _picker.pickImage(source: ImageSource.gallery).then((value){
+      if (value != null) {
+        _photo = File(value.path);
+        uploadFile(_photo);
+      } else {
+        Get.defaultDialog(
+          middleText: "Tidak ada gambar yang dipillih"
+        );
+      }
+    });
+  }
+
+  Future imgFromCamera() async {
+    await _picker.pickImage(source: ImageSource.camera).then((value){
+      if (value != null) {
+        _photo = File(value.path);
+        uploadFile(_photo);
+      } else {
+        Get.defaultDialog(
+          middleText: "Tidak ada gambar yang dipillih"
+        );
+      }
+    });
+  }
+
+  Future uploadFile(filePhoto) async {
+    if (filePhoto == null) return;
+    final fileName = basename(filePhoto!.path);
+    final destination = 'files/profiles';
+
+    try {
+      final ref = firebase_storage.FirebaseStorage.instance
+          .ref(destination)
+          .child('$fileName');
+      await ref.putFile(filePhoto!);
+      
+      String url = (await ref.getDownloadURL()).toString();
+
+      UserServices.updatePictureProfile(url);
+    } catch (e) {
+      Get.defaultDialog(
+        middleText: "Terjadi kesalahan"
+      );
+    }
+  }
+
+  void showPicker(context) {
+    showModalBottomSheet(
+    context: context,
+    builder: (BuildContext bc) {
+      return SafeArea(
+        child: Container(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                  leading: new Icon(Icons.photo_library),
+                  title: new Text('Gallery'),
+                  onTap: () {
+                    imgFromGallery();
+                    Navigator.of(context).pop();
+                  }),
+              ListTile(
+                leading: new Icon(Icons.photo_camera),
+                title: new Text('Camera'),
+                onTap: () {
+                  imgFromCamera();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +110,7 @@ class ProfilePage extends StatelessWidget {
         title: const Text.rich(
                 TextSpan(
                   text: "EVENT",
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Color.fromARGB(255, 46, 45, 45),
                     fontSize: 18,
                     fontFamily: "Quicksand",
@@ -32,7 +119,7 @@ class ProfilePage extends StatelessWidget {
                 children: [
                   TextSpan(
                   text: "APP",
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Color.fromARGB(255, 46, 45, 45),
                     fontSize: 18,
                     fontFamily: "Quicksand",
@@ -74,7 +161,7 @@ class ProfilePage extends StatelessWidget {
                           color: Color.fromARGB(255, 54, 60, 79),
                         ),
                         SizedBox(
-                          height: 60,
+                          height: 55,
                         ),
                         Expanded(
                           child: Container(
@@ -82,7 +169,23 @@ class ProfilePage extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                Center(
+                                  child: InkWell(
+                                    onTap: () => showPicker(context),
+                                    child: const Text(
+                                      "Ubah Gambar",
+                                      style: TextStyle(
+                                        fontFamily: "Quicksand",
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.blue
+                                      ),  
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text(
                                   "Profil Kamu",
                                   style: TextStyle(
                                     fontFamily: "Quicksand",
@@ -92,10 +195,10 @@ class ProfilePage extends StatelessWidget {
                                     color: Color.fromARGB(255, 54, 60, 79)
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
-                                Text(
+                                const Text(
                                   "Nama:",
                                   style: TextStyle(
                                     color: Color.fromARGB(255, 54, 60, 79),
@@ -230,10 +333,14 @@ class ProfilePage extends StatelessWidget {
                         backgroundColor: Color.fromARGB(255, 226, 225, 225),
                         child: Padding(
                           padding: EdgeInsets.all(2),
-                          child: ClipOval(child: Image.asset(snapshot.data!.get('image_url'))),
+                          child: ClipOval(
+                            child: snapshot.data!.get("image_url") != "" ? FadeInImage.assetNetwork(
+                              placeholder: "assets/images/user.png", 
+                              image: snapshot.data!.get("image_url") 
+                              ): Image.asset("assets/images/user.png")
+                            )),
                         ),
                       )
-                    )
                   ],
                 ): Text("Loading ...");
               },

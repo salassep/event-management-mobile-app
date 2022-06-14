@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event_management_app/controller/event_controller.dart';
 import 'package:event_management_app/controller/user_controller.dart';
-import 'package:event_management_app/util/get_date.dart';
 import 'package:event_management_app/pages/detail_page.dart';
+import 'package:event_management_app/services/event_services.dart';
+import 'package:event_management_app/util/get_date.dart';
 import 'package:event_management_app/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,10 +12,12 @@ import 'package:get/get.dart';
 class Home extends StatelessWidget {
 
   final UserController userController = Get.put(UserController());
+  final EventChose eventChose = Get.put(EventChose());
 
   @override
   Widget build(BuildContext context) {
     userController.pleaseFill();
+    userController.getUserEvents();
     var date = GetDate();
     return Scaffold(
       backgroundColor: Colors.white,
@@ -82,6 +87,7 @@ class Home extends StatelessWidget {
             Container(
               height: 40,
               child: TextField(
+                onChanged: (value) => eventChose.searchEvent(value),
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.all(0),
                   prefixIcon: Icon(Icons.search_outlined),
@@ -107,13 +113,16 @@ class Home extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            Container(
+            Obx(
+              () => Container(
               height: 40,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: <Widget>[
                   ElevatedButton(
-                    onPressed: () {}, 
+                    onPressed: () {
+                      eventChose.choseEvent("Semua");
+                    }, 
                     child: Row(
                       children: [
                         Icon(
@@ -135,7 +144,7 @@ class Home extends StatelessWidget {
                     ),
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
-                      primary: Color.fromARGB(255, 226, 225, 225),
+                      primary: eventChose.evenChosed.value == "Semua" ? Color.fromARGB(150, 54, 60, 79) : Color.fromARGB(255, 226, 225, 225),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(0)
                       )
@@ -145,7 +154,9 @@ class Home extends StatelessWidget {
                     width: 10,
                   ),
                   ElevatedButton(
-                    onPressed: () {}, 
+                    onPressed: () {
+                      eventChose.choseEvent("Desain");
+                    }, 
                     child: Row(
                       children: [
                         Icon(
@@ -167,7 +178,7 @@ class Home extends StatelessWidget {
                     ),
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
-                      primary: Color.fromARGB(255, 226, 225, 225),
+                      primary: eventChose.evenChosed.value == "Desain" ? Color.fromARGB(150, 54, 60, 79) : Color.fromARGB(255, 226, 225, 225),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(0)
                       )
@@ -177,7 +188,9 @@ class Home extends StatelessWidget {
                     width: 10,
                   ),
                   ElevatedButton(
-                    onPressed: () {}, 
+                    onPressed: () {
+                      eventChose.choseEvent("Technology");
+                    }, 
                     child: Row(
                       children: [
                         Icon(
@@ -199,7 +212,7 @@ class Home extends StatelessWidget {
                     ),
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
-                      primary: Color.fromARGB(255, 226, 225, 225),
+                      primary: eventChose.evenChosed.value == "Technology" ? Color.fromARGB(150, 54, 60, 79) : Color.fromARGB(255, 226, 225, 225),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(0)
                       )
@@ -208,37 +221,93 @@ class Home extends StatelessWidget {
                 ],
               ),
             ),
+            ),
             SizedBox(
               height: 20,
             ),
-            GestureDetector(
-              onTap: (() => Get.to(DetailPage("",""))),
-              child: Container(
-                color: Color.fromARGB(255, 226, 225, 225),
-                height: 200,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      left: 15,
-                      bottom: 15,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 6, horizontal: 5),
-                        color: Color.fromARGB(255, 54, 60, 79),
-                        child: Text(
-                          "27 June | 09.30",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontFamily: "Quicksand",
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white
-                          ),
+            Obx(
+              () => StreamBuilder<QuerySnapshot>(
+              stream: eventChose.evenChosed.value == "Semua" 
+                ? eventChose.title.value == "" 
+                ? events.where('isPublish', isEqualTo: true).snapshots() 
+                : events.where('title', isNotEqualTo: eventChose.title.value + " ").orderBy("title")
+                .startAt([eventChose.title.value,]).endAt([eventChose.title.value+'\uf8ff',]).snapshots() 
+                : events.where('category', isEqualTo: eventChose.evenChosed.value).snapshots(),
+              builder: (_, snapshot) {
+                return (snapshot.hasData) 
+                  ? ListView.builder(
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      DocumentSnapshot doc = snapshot.data!.docs[index];
+                      return GestureDetector(
+                        onTap: () => Get.to(() => DetailPage(doc.id, doc['price'])),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              color: Color.fromARGB(255, 226, 225, 225),
+                              height: 200,
+                              width: MediaQuery.of(context).size.width,
+                              child: Stack(
+                                children: [
+                                  Center(
+                                    child: doc['image_url'] == "" ? Image.asset(
+                                      "assets/images/logo.png",
+                                      width: 150,
+                                      height: 150,
+                                      alignment: Alignment.center,
+                                    ) : FadeInImage.assetNetwork(
+                                    placeholder: "assets/images/logo.png", 
+                                    image: doc['image_url'],
+                                    width: 250,
+                                    height: 200,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    left: 15,
+                                    bottom: 15,
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(vertical: 6, horizontal: 5),
+                                      color: Color.fromARGB(255, 54, 60, 79),
+                                      child: Text(
+                                        "${doc['schedule']['day']} - ${doc['schedule']['month']} - ${doc['schedule']['year']} | ${doc['schedule']['clock']}.${doc['schedule']['minute']}",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontFamily: "Quicksand",
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white
+                                        ),
+                                      ),
+                                    )
+                                  )
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              doc['title'],
+                              style: TextStyle(
+                                fontFamily: "Quicksand",
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18
+                              ),
+                            ),
+                            SizedBox(
+                              height: 15,
+                            )
+                          ],
                         ),
-                      )
-                    )
-                  ],
-                ),
-              ),
-            )
+                      );
+                    },
+                  ) : Text ("Mengambil data ....");
+              }
+            ), 
+            ),
           ],
         )
       ),

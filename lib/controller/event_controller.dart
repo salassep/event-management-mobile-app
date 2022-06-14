@@ -1,6 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+
+class EventChose extends GetxController {
+  var evenChosed = "".obs;
+  var title = "".obs;
+
+  void choseEvent(v){
+    evenChosed.value = v;
+  }
+
+  void searchEvent(eventTitle){
+    title.value = eventTitle;
+  }
+
+  @override
+  void onReady() {
+    evenChosed.value = "Semua";
+    super.onReady();
+  }
+}
+
 enum Delivery { Desain, Technology, Cloud, Programming, Others }
 
 class CreateEventCategoryController extends GetxController {
