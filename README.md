@@ -1,6 +1,6 @@
-# event_management_app
+# Event Management App
 
-A new Flutter project.
+A mobile application for event management made using Flutter.
 
 ## Getting Started
 
