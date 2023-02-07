@@ -1,4 +1,4 @@
-# Event Management App
+# Event Management Mobile App
 
 A mobile application for event management made using Flutter.
 
